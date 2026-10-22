@@ -1,72 +1,40 @@
-# Encrypted Secrets Vault
+# Lockbox — Encrypted Secrets Vault
 
-## Project Summary
-**Category:** Data, Security & Algorithms  
-**Difficulty:** Intermediate  
-**Suggested team split:** Encryption/storage, permissions, rotation, audit log 
+**Stack:** React 18 + Vite frontend, Python FastAPI backend, PostgreSQL 16 database, HTTP polling every 5 seconds for secret metadata and audit events.
 
-## Description
-This project is a good fit for a small team that wants to build something real and usable in a short amount of time. It focuses on one clear feature, clean data flow, and a simple user experience that can be demoed without extra fluff. The goal is to turn a good idea into a working MVP with a solid backend, a basic interface, and a realistic set of edge cases.
+## Run locally
 
-## Scope
-Store encrypted secrets, enforce access permissions, rotate values, and record access events.
+Requires Docker, Python 3.10+, Node 20+.
 
-## Core Features
-- Deliver the main user flow from start to finish.
-- Support the required data model and user interactions.
-- Handle validation, edge cases, and error states cleanly.
-- Include basic monitoring, feedback, or reporting where relevant.
-- Make the app easy to explain during a live demo.
+1. `docker compose up -d` (starts PostgreSQL)
+2. `python -m venv .venv && source .venv/bin/activate` (Windows: `.venv\Scripts\activate`)
+3. `pip install -r requirements.txt`
+4. Copy `.env.example` to `.env`. Generate a stable key: `python -c "import secrets; print(secrets.token_hex(32))"`. Replace `VAULT_MASTER_KEY` with the output. **Keep the same key on every restart.**
+5. Load backend environment variables: `set -a; source .env; set +a` (Windows PowerShell: set `DATABASE_URL`, `VAULT_MASTER_KEY`, `FRONTEND_ORIGIN` via `$env:NAME='value'`).
+6. `uvicorn backend.main:app --reload` (API: http://localhost:8000/docs)
+7. In another terminal: `cd frontend && npm install && npm run dev` (UI: http://localhost:5173)
 
-## Deliverables
-- A working deployed application or API demo
-- A clear README with setup instructions and environment variables
-- A minimal database schema or data model definition
-- UI screens or API endpoints for the core MVP
-- A basic test strategy covering the happy path and one major failure path
-- A short demo script explaining the architecture, choices, and trade-offs
+For production, use a managed PostgreSQL database, HTTPS, secure secret storage for `VAULT_MASTER_KEY`, and configure `FRONTEND_ORIGIN` and `VITE_API_URL` to deployed origins. The API creates tables at startup for the MVP; use Alembic migrations for a production system.
 
-## Suggested Architecture
-- Frontend: simple dashboard, form-based interface, or lightweight visual layer
-- Backend: API or service layer for business logic and validation
-- Data layer: database, in-memory persistence, or structured file storage for MVP use
-- Optional extras: auth, async jobs, scheduling, WebSockets, caching, or notifications depending on the project
+## API
 
-## Learning Outcomes
-Security fundamentals, key handling, authorization
+- `POST /api/register` — register username; returns one-time bearer token
+- `GET /api/me` — verify token
+- `GET /api/secrets`, `POST /api/secrets` — list/create
+- `GET /api/secrets/{id}` — reveal authorized value
+- `PUT /api/secrets/{id}/rotate` — rotate
+- `POST /api/secrets/{id}/grants` — grant read/write
+- `DELETE /api/secrets/{id}/grants/{username}` — revoke
+- `DELETE /api/secrets/{id}` — delete
+- `GET /api/audit` — audit events
+- `GET /api/health` — health
 
-## Recommended MVP Checklist
-1. Define the main user flow and success criteria.
-2. Build the data model and core backend logic.
-3. Connect the UI or client to the main application flow.
-4. Add key validation, security checks, and realistic error states.
-5. Test the happy path and at least one important edge case.
-6. Deploy the app and document the setup clearly.
+Authenticated requests use `Authorization: Bearer TOKEN`. The React dashboard polls list/audit every 5 seconds, not decrypted secret values.
 
-## Free Deployment Options
-Cloudflare Pages, Vercel, or GitHub Pages for demos; Render or Railway for APIs; Supabase or Postgres for persistence.
+## Demo walkthrough
 
-## Good Free Hosting Choices
-- Static frontend: Vercel, Netlify, or GitHub Pages
-- API/backend: Render, Railway, or Fly.io
-- Database/realtime services: Supabase, Neon, Firebase, or Cloudflare D1
-- Documentation/demo pages: GitHub Pages, Cloudflare Pages, or Vercel
+Register Alice, save token, create a dummy `PAYMENT_API_KEY`. Register Bob in another browser, save token. Alice grants Bob `read` access. Bob can reveal but cannot rotate (403). Alice rotates the value (version increments), then revokes Bob. Show Bob's denied read and audit activity.
 
-## Typical Tech Stack
-- Frontend: React, Next.js, plain HTML/JS, or similar lightweight UI tooling
-- Backend: Node.js, Python (Flask/FastAPI), or Java/Spring Boot
-- Database: Postgres, SQLite, Supabase, or a simple file-based store
-- Real-time layer: WebSockets, polling, or background workers if needed
+## Security notes
 
-## Final Demo Expectations
-- Provide a working URL with sample or seeded data
-- Show one clear end-to-end flow from start to finish
-- Explain the most important technical decisions and trade-offs
-- Include screenshots, screen recordings, or a brief live walk-through
-- Highlight what was completed in the MVP and what would be next if the project continued
-
-## Next Improvements
-- Add authorization, auditing, or stronger validation
-- Improve test coverage and resilience
-- Add analytics, metrics, or observability
-- Expand functionality once the core MVP is stable
+AES-256-GCM encrypts values with a random 12-byte nonce and authenticated secret ID/version. The database stores ciphertext and SHA-256 bearer token hashes, not plaintext secrets or raw bearer tokens. The UI only reveals on demand; avoid recording screen while revealing. PostgreSQL constraints enforce ownership/name uniqueness and grant uniqueness. This is an **educational MVP**, not a production-audited secrets manager. Before storing real credentials add expiring/revocable sessions, rate limiting, secret management/KMS, HTTPS-only deployment, structured migration and backup strategy, audit integrity, incident monitoring, and concurrency tests. Treat copied tokens and revealed values as sensitive.
