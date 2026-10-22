@@ -23,7 +23,7 @@ if len(KEY_HEX) != 64:
 try: KEY = bytes.fromhex(KEY_HEX)
 except ValueError: raise RuntimeError('VAULT_MASTER_KEY must be hexadecimal')
 app = FastAPI(title='Encrypted Secrets Vault', version='1.0.0')
-app.add_middleware(CORSMiddleware, allow_origins=[x.strip() for x in os.getenv('FRONTEND_ORIGIN','http://localhost:5173').split(',')], allow_credentials=False, allow_methods=['GET','POST','PUT','DELETE'], allow_headers=['Authorization','Content-Type'])
+app.add_middleware(CORSMiddleware, allow_origins=[x.strip() for x in os.getenv('FRONTEND_ORIGIN','http://localhost:5173').split(',')], allow_origin_regex=r'^https?://(localhost|127\.0\.0\.1)(:\d+)?$', allow_credentials=False, allow_methods=['GET','POST','PUT','DELETE'], allow_headers=['Authorization','Content-Type'])
 
 @contextmanager
 def db():
@@ -123,7 +123,9 @@ def rotate(sid:int,data:ValueInput,authorization:str|None=Header(None)):
     a=actor(authorization)
     with db() as c:
         s=access(c,sid,a['id'],'write');v=s['version']+1;n,ct=encrypt(data.value,sid,v)
-        c.execute('UPDATE secrets SET nonce=%s,ciphertext=%s,version=%s,updated_at=%s WHERE id=%s AND version=%s',(n,ct,v,now(),sid,s['version']));log(c,a['id'],'rotate',sid,'ok')
+        updated=c.execute('UPDATE secrets SET nonce=%s,ciphertext=%s,version=%s,updated_at=%s WHERE id=%s AND version=%s',(n,ct,v,now(),sid,s['version'])).rowcount
+        if updated != 1: raise HTTPException(409,'Secret was updated concurrently; reload and retry')
+        log(c,a['id'],'rotate',sid,'ok')
         return {'id':sid,'version':v}
 @app.post('/api/secrets/{sid}/grants')
 def grant(sid:int,data:GrantInput,authorization:str|None=Header(None)):
