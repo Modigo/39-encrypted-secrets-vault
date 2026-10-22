@@ -1,0 +1,61 @@
+/* Page-specific layout. */
+
+/* ---- Dashboard (mockup 01) ---------------------------------------------- */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.filters-search {
+  flex: 1;
+}
+.filters-search .input {
+  height: 38px;
+  background: var(--surface);
+  border-color: var(--border);
+}
+.filters-search .input:focus {
+  border-color: var(--accent);
+}
+.filters-owner {
+  flex: none;
+  width: 170px;
+}
+.cell-index {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.table td .cell-name {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+}
+.table td .cell-name:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.table td.cell-mask {
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+}
+.table td.cell-actions {
+  overflow: visible;
+  text-align: right;
+}
+.cell-actions > * {
+  vertical-align: middle;
+}
+.cell-actions .icon-btn + .icon-btn,
+.cell-actions .icon-btn + .menu-root {
+  margin-left: 4px;
+}
+
+@media (max-width: 900px) {
+  .filters {
+    flex-direction: column;
+  }
+  .filters-owner {
+    width: 100%;
+  }
+}

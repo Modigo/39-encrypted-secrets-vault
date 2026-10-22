@@ -1,0 +1,259 @@
+/* Tables, skeletons, empty/error states and the 403 card (mockups 01, 03, 06). */
+
+/* position: relative keeps absolutely positioned children (e.g. .sr-only labels) inside the scroller. */
+.table-scroll {
+  position: relative;
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.table th {
+  height: 38px;
+  padding: 0 16px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.table td {
+  height: 57px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: var(--fs-md);
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table tbody tr.row-link {
+  cursor: pointer;
+}
+.table tbody tr.row-link:hover td {
+  background: rgba(139, 92, 246, 0.05);
+}
+.table-message-row td {
+  height: auto;
+  white-space: normal;
+}
+.table-footnote {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+.table-footnote svg {
+  flex: none;
+  width: 13px;
+  height: 13px;
+}
+
+/* ---- Skeleton ----------------------------------------------------------- */
+.skeleton {
+  display: inline-block;
+  height: 10px;
+  max-width: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-2) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s ease-in-out infinite;
+}
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+/* ---- Empty state -------------------------------------------------------- */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56px 24px;
+  text-align: center;
+}
+.empty-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.empty-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.empty-danger .empty-icon {
+  background: var(--danger-soft);
+  border-color: transparent;
+  color: var(--danger-text);
+}
+.empty-title {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--text);
+}
+.empty-text {
+  max-width: 380px;
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+.empty-action {
+  margin-top: 16px;
+}
+
+/* ---- Error banner ------------------------------------------------------- */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 10px 12px 10px 14px;
+  background: var(--danger-row);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+.error-banner-icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--danger-text);
+}
+.error-banner-text {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1;
+}
+.error-banner-text strong {
+  color: var(--danger-text);
+  font-weight: 600;
+}
+.error-banner-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--danger-text);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.error-banner-retry:hover:not(:disabled) {
+  background: var(--danger-soft);
+}
+.error-banner-retry svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ---- Access denied (mockup 06) ------------------------------------------ */
+.denied-wrap {
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - var(--topbar-h) - 120px);
+}
+.denied-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(560px, 100%);
+  padding: 40px;
+  background: var(--surface);
+  border: 1px solid rgba(239, 68, 68, 0.32);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.05), 0 0 40px rgba(239, 68, 68, 0.06);
+  text-align: center;
+}
+.denied-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  background: #2b191f;
+  color: var(--danger-text);
+}
+.denied-icon svg {
+  width: 28px;
+  height: 28px;
+}
+.denied-title {
+  margin-top: 14px;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.denied-text {
+  max-width: 470px;
+  margin-top: 10px;
+  color: var(--text-2);
+  font-size: var(--fs-md);
+  line-height: 1.65;
+}
+.denied-text strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.denied-name {
+  color: var(--text);
+  font-size: 13.5px;
+}
+.denied-log {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px;
+  width: 100%;
+  margin-top: 20px;
+  padding: 11px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-2);
+  font-size: 12px;
+}
+.denied-log-time {
+  color: var(--text-muted);
+}
+.denied-log-outcome {
+  color: var(--danger-text);
+}
+.denied-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+@media (max-width: 600px) {
+  .denied-card {
+    padding: 28px 20px;
+  }
+}

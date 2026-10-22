@@ -1,0 +1,391 @@
+/* Shared components. Values come from theme.css tokens only. */
+
+/* ---- Button ------------------------------------------------------------ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-size: var(--fs-md);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.btn-glyph {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+.btn-secondary {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--surface-3);
+}
+.btn-danger {
+  background: transparent;
+  border-color: var(--danger-border);
+  color: var(--danger-text);
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-soft);
+}
+.btn-danger-solid {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-danger-solid:hover:not(:disabled) {
+  background: #f05252;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.btn-sm {
+  height: 30px;
+  padding: 0 10px;
+  font-size: var(--fs-sm);
+}
+.btn-icon-only {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+.btn-block {
+  width: 100%;
+}
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.icon-btn:hover:not(:disabled) {
+  background: var(--surface-3);
+  color: var(--text);
+}
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- Avatar ------------------------------------------------------------ */
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+.avatar-sm {
+  width: 24px;
+  height: 24px;
+  font-size: 9.5px;
+}
+.avatar-md {
+  width: 28px;
+  height: 28px;
+  font-size: 10.5px;
+}
+.avatar-lg {
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
+}
+.av-violet { background: var(--av-violet); }
+.av-teal { background: var(--av-teal); }
+.av-orange { background: var(--av-orange); }
+.av-pink { background: var(--av-pink); }
+.av-green { background: var(--av-green); }
+.av-slate { background: var(--av-slate); }
+
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.user-chip-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.user-chip-name {
+  color: var(--text);
+  font-size: var(--fs-md);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.user-chip-sub {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ---- Badge ------------------------------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.badge-icon {
+  width: 12px;
+  height: 12px;
+}
+.badge-accent {
+  background: var(--accent-soft-2);
+  color: var(--accent-text);
+}
+.badge-success {
+  background: var(--success-soft);
+  color: var(--success-text);
+}
+.badge-danger {
+  background: var(--danger-soft);
+  color: var(--danger-text);
+}
+.badge-warning {
+  background: var(--warning-soft);
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
+}
+.badge-neutral {
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+.badge-version {
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  color: var(--text-2);
+  font-size: 11.5px;
+  font-weight: 400;
+}
+
+/* ---- Menu / dropdown --------------------------------------------------- */
+.menu-root {
+  position: relative;
+  display: inline-block;
+}
+.menu {
+  position: fixed;
+  z-index: 60;
+  min-width: 190px;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  font-size: var(--fs-md);
+  text-align: left;
+  cursor: pointer;
+}
+.menu-item:hover:not(:disabled),
+.menu-item:focus-visible {
+  background: var(--surface-2);
+  color: var(--text);
+  outline: none;
+}
+.menu-item.is-selected {
+  background: var(--accent-soft-2);
+  color: var(--text);
+}
+.menu-item.is-danger {
+  color: var(--danger-text);
+}
+.menu-item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.menu-item-icon {
+  display: inline-flex;
+  flex: none;
+}
+.menu-lucide {
+  width: 16px;
+  height: 16px;
+}
+.menu-item-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.menu-item-sub {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.menu-check {
+  width: 16px;
+  height: 16px;
+  color: var(--accent-text);
+}
+.menu-divider {
+  height: 1px;
+  margin: 6px 0;
+  background: var(--border);
+}
+
+/* ---- Card -------------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 52px;
+  padding: 14px 20px 13px;
+  border-bottom: 1px solid var(--border);
+}
+.card-title {
+  font-size: var(--fs-base);
+  font-weight: 600;
+}
+.card-sub {
+  margin-top: 1px;
+  line-height: 1.35;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+.card-body {
+  padding: 20px;
+}
+
+/* ---- Toast ------------------------------------------------------------- */
+.toasts {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(380px, calc(100vw - 32px));
+}
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 12px 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  font-size: var(--fs-md);
+  animation: toast-in 0.18s ease-out;
+}
+.toast-success {
+  border-left: 3px solid var(--success);
+}
+.toast-error {
+  border-left: 3px solid var(--danger);
+}
+.toast-icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  margin-top: 1px;
+}
+.toast-success .toast-icon {
+  color: var(--success);
+}
+.toast-error .toast-icon {
+  color: var(--danger-text);
+}
+.toast-msg {
+  flex: 1;
+  color: var(--text);
+}
+.toast-close {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.toast-close:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+.toast-close svg {
+  width: 14px;
+  height: 14px;
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}

@@ -1,0 +1,137 @@
+/* Design tokens sampled from frontend/mockups/*.png. Use these everywhere. */
+:root {
+  /* Surfaces */
+  --bg: #0b0d12;
+  --surface: #11141b;
+  --surface-2: #171b24;
+  --surface-3: #1e2330;
+  --overlay: rgba(5, 6, 10, 0.72);
+
+  /* Lines */
+  --border: #232937;
+  --border-strong: #2e3546;
+
+  /* Text */
+  --text: #e7e9ef;
+  --text-2: #b4bacb;
+  --text-muted: #7d8497;
+
+  /* Accent (violet) */
+  --accent: #8b5cf6;
+  --accent-hover: #9d74f8;
+  --accent-soft: #221e3a;
+  --accent-soft-2: #272441;
+  --accent-text: #c4b5fd;
+  --accent-ring: rgba(139, 92, 246, 0.28);
+
+  /* Status */
+  --success: #22c55e;
+  --success-soft: #122922;
+  --success-text: #86efac;
+  --danger: #ef4444;
+  --danger-soft: #371b21;
+  --danger-row: #1e161d;
+  --danger-border: #662225;
+  --danger-text: #fca5a5;
+  --warning: #f59e0b;
+  --warning-soft: rgba(245, 158, 11, 0.12);
+  --warning-border: rgba(245, 158, 11, 0.35);
+  --warning-text: #fcd34d;
+  --secret-text: #c4f5d4;
+
+  /* Avatars */
+  --av-violet: #7c3aed;
+  --av-teal: #0e7490;
+  --av-orange: #b45309;
+  --av-pink: #be185d;
+  --av-green: #15803d;
+  --av-slate: #475569;
+
+  /* Shape */
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+  /* Layout */
+  --sidebar-w: 240px;
+  --topbar-h: 56px;
+  --page-pad: 32px;
+
+  /* Type */
+  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-base: 15px;
+  --fs-lg: 16px;
+  --fs-h1: 26px;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--fs-md);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

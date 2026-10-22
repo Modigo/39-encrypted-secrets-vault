@@ -1,0 +1,196 @@
+/* Access control + audit log (mockup 03). */
+
+.access-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.access-stack > .card + .card {
+  margin-top: 7px;
+}
+.secret-select {
+  width: 300px;
+  max-width: 100%;
+}
+.secret-select .select-label {
+  font-size: 13.5px;
+}
+
+.card-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-tools .live {
+  font-size: var(--fs-sm);
+}
+.select-sm {
+  width: 136px;
+  height: 34px;
+  padding: 0 10px 0 12px;
+  background: transparent;
+  border-color: var(--border-strong);
+}
+.card-banner {
+  padding: 14px 20px 0;
+}
+.card-banner .error-banner {
+  margin-bottom: 0;
+}
+.card-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+.card-note svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
+}
+
+/* ---- Permissions table -------------------------------------------------- */
+.perm-table td {
+  height: 59px;
+  overflow: visible;
+}
+.perm-table .user-chip {
+  gap: 10px;
+}
+.perm-table .user-chip-name {
+  font-size: var(--fs-md);
+  font-weight: 500;
+}
+.perm-table .user-chip-sub {
+  font-size: 12.5px;
+}
+.access-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 6px 0 4px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: pointer;
+}
+.access-trigger:hover:not(:disabled):not(.is-locked),
+.access-trigger[aria-expanded="true"] {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+.access-trigger:disabled {
+  cursor: progress;
+}
+.access-trigger.is-locked {
+  cursor: default;
+  padding-right: 4px;
+}
+.access-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.access-accent {
+  background: var(--accent-soft-2);
+  color: var(--accent-text);
+}
+.access-neutral {
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+.access-none {
+  color: var(--text-muted);
+}
+.access-chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+}
+
+/* ---- Audit table -------------------------------------------------------- */
+.audit-table td {
+  height: 51px;
+}
+.audit-table td.audit-time {
+  color: var(--text-2);
+  font-size: 13px;
+}
+.audit-table td.audit-mono {
+  color: var(--text);
+  font-size: 13px;
+}
+.audit-table tr.row-denied td {
+  background: var(--danger-row);
+}
+.audit-table tr.row-denied td:first-child {
+  box-shadow: inset 3px 0 0 var(--danger);
+}
+.audit-table tr.row-fresh td {
+  animation: row-fresh 2.4s ease-out;
+}
+@keyframes row-fresh {
+  0% {
+    background-color: rgba(139, 92, 246, 0.16);
+  }
+}
+
+/* ---- Grant access modal ------------------------------------------------- */
+.field-menu {
+  display: block;
+}
+.select-field {
+  height: 40px;
+  background: var(--bg);
+  border-color: var(--border-strong);
+}
+.field.has-error .select-field {
+  border-color: var(--danger);
+}
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+.segment {
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  font-size: var(--fs-md);
+  cursor: pointer;
+}
+.segment:hover {
+  color: var(--text);
+}
+.segment.is-active {
+  background: var(--accent-soft-2);
+  color: var(--accent-text);
+  font-weight: 500;
+}
+.field + .field > .field-label {
+  margin-top: 0;
+}
+
+@media (max-width: 700px) {
+  .card-header {
+    flex-wrap: wrap;
+  }
+  .secret-select {
+    width: 100%;
+  }
+}
