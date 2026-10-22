@@ -1,22 +1,36 @@
-import React, {useEffect,useState,useCallback} from 'react';
-import {createRoot} from 'react-dom/client';
-import './style.css';
-const API=import.meta.env.VITE_API_URL||'http://localhost:8000';
-function App(){
- const [token,setToken]=useState(''); const [username,setUsername]=useState(''); const [name,setName]=useState('');const [value,setValue]=useState('');const [secrets,setSecrets]=useState([]);const [audit,setAudit]=useState([]);const [notice,setNotice]=useState('');const [reveal,setReveal]=useState(null);const [busy,setBusy]=useState(false);const [tab,setTab]=useState('secrets');const [newToken,setNewToken]=useState('');
- const [tokenCopied,setTokenCopied]=useState(false);
- const call=useCallback(async(path,method='GET',body,override)=>{let response;try{response=await fetch(API+path,{method,headers:{'Content-Type':'application/json',...(override||token?{'Authorization':'Bearer '+(override||token)}:{})},body:body?JSON.stringify(body):undefined,cache:'no-store'})}catch{throw Error('Unable to reach the API. Check that the backend is running and VITE_API_URL is correct.')}let data;try{data=await response.json()}catch{data={}}if(!response.ok){const detail=data.detail;const message=typeof detail==='string'?detail:Array.isArray(detail)?detail.map(item=>item.msg).filter(Boolean).join('; '):'';throw Error(message||`API request failed (${response.status})`)}return data},[token]);
- const refresh=useCallback(async()=>{if(!token)return;try{const [s,a]=await Promise.all([call('/api/secrets'),call('/api/audit')]);setSecrets(s);setAudit(a)}catch(e){setNotice(e.message)}},[token,call]);
- useEffect(()=>{if(!token)return;refresh();const timer=setInterval(refresh,5000);return()=>clearInterval(timer)},[token,refresh]);
- async function run(action){setBusy(true);setNotice('');try{await action();await refresh()}catch(e){setNotice(e.message)}finally{setBusy(false)}}
- const signout=()=>{setToken('');setUsername('');setSecrets([]);setAudit([]);setReveal(null);setNewToken('');setTokenCopied(false)};
- const signIn=()=>{if(!value.trim()){setNotice('Enter your existing access token to sign in.');return}run(async()=>{const me=await call('/api/me','GET',undefined,value.trim());setUsername(me.username);setToken(value.trim());setValue('')})};
- const createAccount=()=>{const accountName=username.trim();if(!/^[a-zA-Z0-9_-]{3,50}$/.test(accountName)){setNotice('Enter a username with 3-50 letters, numbers, underscores, or hyphens.');return}run(async()=>{const result=await call('/api/register','POST',{username:accountName});setUsername(accountName);setToken(result.token);setNewToken(result.token);setTokenCopied(false);setValue('')})};
- const copyNewToken=async()=>{try{await navigator.clipboard.writeText(newToken);setTokenCopied(true)}catch{setNotice('Copy failed. Select and copy the token manually, then store it securely.')}};
- const dismissNewToken=()=>{setNewToken('');setTokenCopied(false)};
- return <div className="shell"><header><div className="brand"><span className="brandicon">◈</span><span>Encrypted Secrets Vault <small>SECURE VAULT</small></span></div><span className="pill"><span className="dot"/> AES-256-GCM ENCRYPTED</span>{token&&<button className="quiet" onClick={signout}>Sign out · {username}</button>}</header>
- {newToken&&<section className="token" role="alert"><strong>Save your access token now. It is shown only once.</strong><p>You need this token to sign in again. Store it securely and never share it. It cannot be recovered after you dismiss this message or sign out.</p><code>{newToken}</code><div className="actions"><button type="button" onClick={copyNewToken}>Copy Token</button>{tokenCopied&&<span role="status">Token copied. Store it securely.</span>}<button type="button" className="secondary" onClick={dismissNewToken}>I have saved it</button></div></section>}
- {!token?<main className="login"><div className="eyebrow">YOUR SECRETS. UNDER CONTROL.</div><h1>Security, without<br/><em>compromise.</em></h1><p>Create an account to receive a generated access token. Save it, then paste it here to sign in. Tokens you make yourself are not valid.</p><div className="panel"><label>USERNAME</label><input value={username} onChange={e=>setUsername(e.target.value)} placeholder="e.g. alice"/><label>EXISTING ACCESS TOKEN (SIGN IN ONLY)</label><textarea rows="2" value={value} onChange={e=>setValue(e.target.value)} placeholder="Paste saved token to sign in"/><div className="actions"><button type="button" disabled={busy} onClick={signIn}>Sign in</button><button type="button" className="secondary" disabled={busy} onClick={createAccount}>Create account</button></div></div>
- </main>:<main className="dashboard"><div className="intro"><div><div className="eyebrow">WORKSPACE / OVERVIEW</div><h1>Secrets vault<span className="accent">.</span></h1><p>Encrypted at rest. Permissioned by design. Audited on every access.</p></div><div className="counter"><b>{secrets.length}</b><span>ACCESSIBLE SECRETS</span></div></div><div className="tabs"><button className={tab==='secrets'?'selected':''} onClick={()=>setTab('secrets')}>Secrets</button><button className={tab==='audit'?'selected':''} onClick={()=>setTab('audit')}>Audit activity</button></div>{tab==='secrets'?<div className="columns"><section className="panel"><h2>Stored secrets</h2><p className="sub">Only metadata is displayed until you reveal a value.</p>{secrets.length===0?<div className="empty">No secrets yet. Create your first secret →</div>:secrets.map(s=><div className="secret" key={s.id}><div><b>◈ {s.name}</b><small>VERSION {s.version} · ID {s.id}</small></div><div className="buttons"><button onClick={()=>run(async()=>{const r=await call('/api/secrets/'+s.id);setReveal({id:s.id,name:s.name,value:r.value})})}>Reveal</button><button className="secondary" onClick={()=>{const v=prompt('New secret value for rotation:');if(v)run(()=>call('/api/secrets/'+s.id+'/rotate','PUT',{value:v}).then(()=>setReveal(null)))}}>Rotate</button><button className="secondary" onClick={()=>{const u=prompt('Username to grant access:');if(!u)return;const p=prompt('Permission: read or write','read');if(p==='read'||p==='write')run(()=>call('/api/secrets/'+s.id+'/grants','POST',{username:u,permission:p}))}}>Share</button><button className="secondary" onClick={()=>{const u=prompt('Username to revoke:');if(u)run(()=>call('/api/secrets/'+s.id+'/grants/'+encodeURIComponent(u),'DELETE'))}}>Revoke</button><button className="danger" onClick={()=>{if(confirm('Delete '+s.name+' permanently?'))run(()=>call('/api/secrets/'+s.id,'DELETE').then(()=>setReveal(null)))}}>Delete</button></div></div>)}</section><section className="panel create"><h2>Add a secret</h2><p className="sub">Your value is encrypted before it reaches storage.</p><form onSubmit={e=>{e.preventDefault();run(async()=>{await call('/api/secrets','POST',{name,value});setName('');setValue('');setNotice('Secret encrypted and stored.')})}}><label>SECRET NAME</label><input required maxLength="100" placeholder="PAYMENT_API_KEY" value={name} onChange={e=>setName(e.target.value)}/><label>SECRET VALUE</label><textarea required rows="5" maxLength="10000" placeholder="Paste a dummy secret value" value={value} onChange={e=>setValue(e.target.value)}/><button disabled={busy} type="submit">+ Encrypt & store</button></form><div className="hint">🔒 Values are encrypted with AES-256-GCM. Never put encryption keys in frontend code.</div></section></div>:<section className="panel"><h2>Audit activity</h2><p className="sub">Auto-refreshes every 5 seconds using polling.</p><div className="audithead"><span>EVENT</span><span>ACTOR</span><span>RESULT</span><span>TIME</span></div>{audit.map(a=><div className="auditrow" key={a.id}><b>{a.action} · #{a.secret_id||'—'}</b><span>{a.actor||'unknown'}</span><span>{a.outcome}</span><span>{new Date(a.at).toLocaleString()}</span></div>)}</section>}{reveal&&<div className="overlay" onClick={()=>setReveal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="eyebrow">DECRYPTED VALUE</div><h2>{reveal.name}</h2><pre>{reveal.value}</pre><div className="actions"><button onClick={()=>navigator.clipboard.writeText(reveal.value)}>Copy</button><button className="secondary" onClick={()=>setReveal(null)}>Hide value</button></div><p className="sub">Do not share decrypted values with unauthorized users.</p></div></div>}</main>}{notice&&<div role="status" className="notice" onClick={()=>setNotice('')}>{notice} ×</div>}<footer>ENCRYPTED SECRETS VAULT / EDUCATIONAL MVP <span>REACT · FASTAPI · POSTGRESQL · POLLING</span></footer></div>
-}
-createRoot(document.getElementById('root')).render(<App/>);
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import './styles/theme.css';
+import './styles/components.css';
+import './styles/forms.css';
+import './styles/states.css';
+import './styles/layout.css';
+import './styles/pages.css';
+import './styles/detail.css';
+import './styles/access.css';
+import './styles/login.css';
+import { App } from './App';
+import { AuthProvider } from './context/AuthContext';
+import { PollStatusProvider } from './context/PollStatusContext';
+import { ToastProvider } from './components/Toast';
+
+createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <ToastProvider>
+        <AuthProvider>
+          <PollStatusProvider>
+            <App />
+          </PollStatusProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
+);
